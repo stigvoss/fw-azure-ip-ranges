@@ -17,7 +17,7 @@ jobs:
           
           # Clear the directory
           if [ -d "$dir" ]; then
-              rm -r "$dir"
+            rm -r "$dir"
           fi
           # Create the directory if it doesn't exist
           mkdir -p "$dir"
@@ -27,17 +27,17 @@ jobs:
           	| jq -rcM '.values[] | { id: .id, region: .properties.region, addresses: .properties.addressPrefixes }' \
           	| while read -r line
           do
-          		# Extract the ID and the IP addresses
-            	id=$(echo $line | jq -rcM '.id')
-            	region=$(echo $line | jq -rCM '.region')
-            	addresses=$(echo $line | jq -rcM '.addresses[]')
+          	# Extract the ID and the IP addresses
+            id=$(echo $line | jq -rcM '.id')
+            region=$(echo $line | jq -rCM '.region')
+            addresses=$(echo $line | jq -rcM '.addresses[]')
             
-            	# Create a directory for the region if it doesn't exist
-            	mkdir -p "$dir/$region"
+            # Create a directory for the region if it doesn't exist
+            mkdir -p "$dir/$region"
             
-            	# Prepend with "ipv4, " or "ipv6, " depending on the IP address type
-            	# Write to a file in the region directory with the ID as the filename
-            	printf '%b' "$addresses" | sed -r 's/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/ipv4, \1/g; s/([0-9a-fA-F]*:[0-9a-fA-F:]+)/ipv6, \1/g' >> "$dir/$region/$id.txt"
+            # Prepend with "ipv4, " or "ipv6, " depending on the IP address type
+            # Write to a file in the region directory with the ID as the filename
+            printf '%b' "$addresses" | sed -r 's/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/ipv4, \1/g; s/([0-9a-fA-F]*:[0-9a-fA-F:]+)/ipv6, \1/g' >> "$dir/$region/$id.txt"
           done
       - name: Commit service files
         run: |
