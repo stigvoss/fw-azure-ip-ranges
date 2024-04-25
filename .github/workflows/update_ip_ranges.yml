@@ -13,10 +13,12 @@ jobs:
           ranges=$(curl -s https://raw.githubusercontent.com/stigvoss/cloud-ip-ranges/main/ranges/azure/public/latest.json)
           dir="Azure"
           
+          # Clear the directory
+          if [ -d "$dir" ]; then
+              rm -r "$dir"
+          fi
           # Create the directory if it doesn't exist
           mkdir -p "$dir"
-          # Clear the directory
-          rm -r "$dir/*"
           
           # Parse the JSON and write the IP addresses to files
           echo "$ranges" \
