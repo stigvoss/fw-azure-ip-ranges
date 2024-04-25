@@ -1,0 +1,45 @@
+name: Update IP Ranges
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update_ip_ranges:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Update IP ranges
+        run: |
+          ranges=$(curl -s https://raw.githubusercontent.com/stigvoss/cloud-ip-ranges/main/ranges/azure/public/latest.json)
+          dir="Azure"
+          
+          # Create the directory if it doesn't exist
+          mkdir -p "$dir"
+          # Clear the directory
+          rm -r "$dir/*"
+          
+          # Parse the JSON and write the IP addresses to files
+          echo "$ranges" \
+          	| jq -rcM '.values[] | { id: .id, addresses: .properties.addressPrefixes }' \
+          	| while read -r line
+          do
+          	# Extract the ID and the IP addresses
+          	id=$(echo $line | jq -rcM '.id')
+          	addresses=$(echo $line | jq -rcM '.addresses[]')
+          
+          	# Prepend with "ipv4, " or "ipv6, " depending on the IP address type
+          	# Write to a file
+          	printf '%b' "$addresses" | sed -r 's/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/ipv4, \1/g; s/([0-9a-fA-F]*:[0-9a-fA-F:]+)/ipv6, \1/g' >> "$dir/$id.txt"
+          done
+      - name: Commit service files
+        run: |
+          git config --global user.name 'Stig Voss'
+          git config --global user.email 'stigvoss@users.noreply.github.com'
+          git add *
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Update Azure IP Ranges (Public)"
+            git push
+          fi
