@@ -42,6 +42,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Update Azure IP Ranges (Public)"
+            git commit -m "Update IP Ranges"
             git push
           fi
