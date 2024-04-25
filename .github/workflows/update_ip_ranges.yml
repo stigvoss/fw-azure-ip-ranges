@@ -2,7 +2,9 @@ name: Update IP Ranges
 
 on:
   workflow_dispatch:
-
+  schedule:
+    - cron: "0 3 * * *"
+    
 jobs:
   update_ip_ranges:
     runs-on: ubuntu-latest
