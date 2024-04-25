@@ -22,7 +22,7 @@ jobs:
           
           # Parse the JSON and write the IP addresses to files
           echo "$ranges" \
-          	| jq -rcM '.values[] | { id: .id, addresses: .properties.addressPrefixes }' \
+          	| jq -rcM '.values[] | { id: .id, region: .properties.region, addresses: .properties.addressPrefixes }' \
           	| while read -r line
           do
           		# Extract the ID and the IP addresses
