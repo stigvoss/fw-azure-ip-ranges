@@ -9,7 +9,7 @@ jobs:
   update_ip_ranges:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Update IP ranges
         run: |
           ranges=$(curl -s https://raw.githubusercontent.com/stigvoss/cloud-ip-ranges/main/ranges/azure/public/latest.json)
